@@ -1,0 +1,85 @@
+# Docker Compose for V3.1 Whale Hunter
+# Used for Neo4j in Phase 3+ (when wallet count > 5000)
+
+version: '3.8'
+
+services:
+  # Neo4j Graph Database (Phase 3+)
+  # Only needed when wallet count exceeds 5,000
+  neo4j:
+    image: neo4j:5.15-community
+    container_name: whale_hunter_neo4j
+    ports:
+      - "7474:7474"  # HTTP
+      - "7687:7687"  # Bolt
+    environment:
+      - NEO4J_AUTH=neo4j/whale_hunter_secret_change_me
+      - NEO4J_PLUGINS=["apoc"]
+      - NEO4J_dbms_memory_heap_initial__size=512m
+      - NEO4J_dbms_memory_heap_max__size=1G
+      - NEO4J_dbms_memory_pagecache_size=512m
+    volumes:
+      - neo4j_data:/data
+      - neo4j_logs:/logs
+    restart: unless-stopped
+    healthcheck:
+      test: wget -O /dev/null http://localhost:7474 || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    profiles:
+      - neo4j  # Only start with --profile neo4j
+
+  # Redis for caching (optional, Phase 3+)
+  redis:
+    image: redis:7-alpine
+    container_name: whale_hunter_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    profiles:
+      - cache
+
+  # Webhook receiver for Helius webhooks
+  webhook_receiver:
+    build:
+      context: .
+      dockerfile: Dockerfile.webhook
+    container_name: whale_hunter_webhooks
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_PATH=/app/data/wallet_graph.db
+      - LOG_LEVEL=INFO
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./config:/app/config
+    restart: unless-stopped
+    profiles:
+      - webhooks
+
+volumes:
+  neo4j_data:
+  neo4j_logs:
+  redis_data:
+
+# Usage:
+#
+# Phase 0-2 (SQLite only):
+#   No Docker needed, run scripts directly
+#
+# Phase 3+ (Neo4j for large wallet graph):
+#   docker-compose --profile neo4j up -d
+#
+# With caching:
+#   docker-compose --profile neo4j --profile cache up -d
+#
+# With webhook receiver:
+#   docker-compose --profile webhooks up -d
+#
+# All services:
+#   docker-compose --profile neo4j --profile cache --profile webhooks up -d

@@ -1,0 +1,80 @@
+# CEX Hot Wallet Blacklist
+# Wallets funded by these addresses have untraceable provenance
+# Last updated: January 2026
+
+solana:
+  binance:
+    - "5tzFkiKscXHK5ZXCGbXZxdw7gTjjD1mBwuoFbhUvuAi9"  # Binance Hot Wallet 1
+    - "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM"  # Binance Hot Wallet 2
+    - "2ojv9BAiHUrvsm9gxDe7fJSzbNZSJcxZvf8dqmWGHG8S"  # Binance Hot Wallet 3
+    - "3yFwqXBfZY4jBVUafQ1YEXw189y2dN3V5KQq9uzBDy1E"  # Binance Hot Wallet 4
+    
+  coinbase:
+    - "GJRs4FwHtemZ5ZE9x3FNvJ8TMwitKTh21yxdRPqn7npE"  # Coinbase Hot Wallet 1
+    - "H8sMJSCQxfKiFTCfDR3DUMLPwcRbM61LGFJ8N4dK3WjS"  # Coinbase Hot Wallet 2
+    - "2AQdpHJ2JpcEgPiATUXjQxA8QmafFegfQwSLWSprPicm"  # Coinbase Hot Wallet 3
+    
+  kraken:
+    - "JA98mShDSf4qqxVpVvGTwRZ8NrqbUhpUhgHy8gF3K1bJ"  # Kraken Hot Wallet 1
+    - "CuieVDEDtLo7FypA9SbLM9saXFdb1dsshEkyErMqkRQq"  # Kraken Hot Wallet 2
+    
+  okx:
+    - "ExXkN3vR4xvBp6RQxwZ3kM9e4qyJdNb9cTvVnfJ1mH7"  # OKX Hot Wallet 1
+    - "5VCwKtCXgCJ6kit5FybXjvriW3xELsFDhYrPSqtJNmcD"  # OKX Hot Wallet 2
+    
+  bybit:
+    - "AC5RDfQFmDS1deWZos921JfqscXdByf8BKHs5ACWjtW2"  # Bybit Hot Wallet 1
+    - "DDrAV69F9RjJk1yVJnqZ5iGKCpeTKzT5zHhGxvVP5x7a"  # Bybit Hot Wallet 2
+    
+  kucoin:
+    - "BmFdpraQhkiDQE6SnfG5omcA1VwzqfXrwtNYBwWTymy6"  # KuCoin Hot Wallet 1
+    
+  gate_io:
+    - "u6PJ8DtQuPFnfmwHbGFULQ4u4EgjDiyYKjVEsynXq2w"   # Gate.io Hot Wallet 1
+    
+  huobi:
+    - "88xTWZMeKfiTgbfEmPLdsUCQcZinwUfk25EBQZ21XMAZ"  # Huobi Hot Wallet 1
+
+ethereum:
+  binance:
+    - "0x28C6c06298d514Db089934071355E5743bf21d60"  # Binance 14
+    - "0x21a31Ee1afC51d94C2eFcCAa2092aD1028285549"  # Binance 15
+    - "0xdfd5293d8e347dfe59e90efd55b2956a1343963d"  # Binance 16
+    - "0x56Eddb7aa87536c09CCc2793473599fD21A8b17F"  # Binance 17
+    - "0xf977814e90da44bfa03b6295a0616a897441acec"  # Binance 8
+    
+  coinbase:
+    - "0x503828976D22510aad0201ac7EC88293211D23Da"  # Coinbase 1
+    - "0xddfAbCdc4D8FfC6d5beaf154f18B778f892A0740"  # Coinbase 2
+    - "0xa9d1e08c7793af67e9d92fe308d5697fb81d3e43"  # Coinbase 3
+    - "0x71660c4005ba85c37ccec55d0c4493e66fe775d3"  # Coinbase 4
+    
+  kraken:
+    - "0x267be1c1d684f78cb4f6a176c4911b741e4ffdc0"  # Kraken 4
+    - "0x53d284357ec70ce289d6d64134dfac8e511c8a3d"  # Kraken Hot
+    - "0x2910543af39aba0cd09dbb2d50200b3e800a63d2"  # Kraken 3
+    
+  okx:
+    - "0x6cc5f688a315f3dc28a7781717a9a798a59fda7b"  # OKX
+    - "0x236f9f97e0e62388479bf9e5ba4889e46b0273c3"  # OKX 2
+    
+  bybit:
+    - "0xf89d7b9c864f589bbf53a82105107622b35eaa40"  # Bybit
+    
+  huobi:
+    - "0xab5c66752a9e8167967685f1450532fb96d5d24f"  # Huobi 34
+    - "0x6748f50f686bfbca6fe8ad62b22228b87f31ff2b"  # Huobi 2
+
+# Notes:
+# - These addresses are periodically rotated by exchanges
+# - Run `scripts/update_cex_blacklist.py` monthly to refresh
+# - Wallets funded by CEX still tracked but flagged as lower confidence
+# - Temporal clustering from CEX can still indicate insider coordination
+
+# Temporal clustering rules:
+# If 5+ wallets funded by same CEX within 30 seconds with identical amounts,
+# this MAY indicate coordinated insider activity even through CEX obfuscation.
+temporal_clustering:
+  min_wallets: 5
+  time_window_seconds: 30
+  identical_amount_tolerance: 0.01  # 1% tolerance for "identical" amounts
